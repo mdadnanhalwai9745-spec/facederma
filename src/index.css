@@ -1,0 +1,203 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-serif: 'Cormorant Garamond', Georgia, serif;
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important;
+    font-family: var(--font-sans);
+    background-color: #F8F6F2;
+    color: #22252A;
+    margin: 0;
+    padding: 0;
+  }
+
+  #root {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, .font-luxury {
+    font-family: var(--font-serif);
+  }
+}
+
+/* Eliminate white vertical lines/tracks caused by browser scrollbars on mobile */
+@media (max-width: 768px) {
+  html, body, #root, * {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+
+  ::-webkit-scrollbar {
+    display: none !important;
+    width: 0px !important;
+    height: 0px !important;
+    background: transparent !important;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent !important;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: transparent !important;
+  }
+}
+
+/* Elegant minimalist scrollbar for desktop (never a white track) */
+@media (min-width: 769px) {
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(197, 168, 128, 0.35);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(197, 168, 128, 0.6);
+  }
+}
+
+/* 3D Card Flip Utilities */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-preserve-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Subtle luxury glow */
+.luxury-glow {
+  background: radial-gradient(circle at 50% 50%, rgba(197, 168, 128, 0.12) 0%, rgba(250, 249, 245, 0) 70%);
+}
+
+.luxury-podium {
+  background: radial-gradient(ellipse at 50% 90%, rgba(197, 168, 128, 0.18) 0%, rgba(226, 209, 179, 0.08) 40%, transparent 75%);
+}
+
+/* Hide scrollbar for clean carousels if needed */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ========================================================================= */
+/* TOP ACCENT BAR: Slow & Steady Hard Shining Line Sweep                     */
+/* ========================================================================= */
+@keyframes steadyHardSweep {
+  0% {
+    left: -20%;
+  }
+  100% {
+    left: 120%;
+  }
+}
+
+.animate-steady-hard-line {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 140px;
+  animation: steadyHardSweep 6s linear infinite;
+  pointer-events: none;
+  will-change: left;
+}
+
+@media (min-width: 640px) {
+  .animate-steady-hard-line {
+    width: 220px;
+  }
+}
+
+/* ========================================================================= */
+/* SENTENCE: Hard Sun Shine (Pure Brilliant Solar Glint, No Heating)         */
+/* ========================================================================= */
+@keyframes sunHardGlint {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes solarGlareRays {
+  0%, 100% {
+    filter: drop-shadow(0 0 3px #FFFFFF) drop-shadow(0 0 10px rgba(255, 255, 255, 0.95)) drop-shadow(0 0 22px rgba(255, 250, 215, 0.8));
+    opacity: 0.96;
+  }
+  50% {
+    filter: drop-shadow(0 0 4px #FFFFFF) drop-shadow(0 0 16px rgba(255, 255, 255, 1)) drop-shadow(0 0 32px rgba(255, 245, 195, 0.95));
+    opacity: 1;
+  }
+}
+
+.text-sun-hard-shine {
+  background: linear-gradient(
+    100deg,
+    #FFFFFF 0%,
+    #FFFFFF 26%,
+    #FFFBE5 36%,
+    #FFFFFF 44%,
+    #FFFFFF 50%,
+    #FFFFFF 56%,
+    #FFFBE5 64%,
+    #FFFFFF 74%,
+    #FFFFFF 100%
+  );
+  background-size: 240% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-flex;
+  align-items: center;
+  animation: sunHardGlint 3.8s linear infinite, solarGlareRays 3.2s ease-in-out infinite;
+  will-change: background-position, filter;
+}
+
+@keyframes sunStarSpin {
+  0% {
+    transform: rotate(0deg) scale(0.9);
+    opacity: 0.8;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(360deg) scale(0.9);
+    opacity: 0.8;
+  }
+}
+
+.animate-sun-star {
+  animation: sunStarSpin 8s linear infinite;
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+

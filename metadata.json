@@ -1,0 +1,6 @@
+{
+  "name": "Face Derma Skincare",
+  "description": "World-class luxury one-page cosmetic website for Face Derma clinical skincare brand.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
