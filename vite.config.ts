@@ -156,7 +156,7 @@ function imageUploadPlugin(): Plugin {
 
 export default defineConfig(() => {
   return {
-    base: '/FACEDERMA/',
+    base: '/facederma/',
     plugins: [react(), tailwindcss(), imageUploadPlugin()],
     resolve: {
       alias: {
