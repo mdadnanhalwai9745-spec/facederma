@@ -1,12 +1,12 @@
 /**
  * Helper to ensure static asset URLs resolve properly whether running:
  * 1. Locally on /
- * 2. On GitHub Pages with base /FACEDERMA/
+ * 2. On GitHub Pages with base /facederma/
  * 3. In Cloud preview environments
  */
 export function getAssetUrl(pathStr: string | undefined | null): string {
   if (!pathStr) return '';
-  
+
   // Data URLs, Blobs, and external absolute HTTP URLs are returned as-is
   if (
     pathStr.startsWith('http://') ||
@@ -17,7 +17,7 @@ export function getAssetUrl(pathStr: string | undefined | null): string {
     return pathStr;
   }
 
-  // Vite automatically replaces import.meta.env.BASE_URL with the configured base (e.g. '/FACEDERMA/')
+  // Vite automatically replaces import.meta.env.BASE_URL with the configured base (e.g. '/facederma/')
   const base = import.meta.env.BASE_URL || '/';
   const cleanBase = base.endsWith('/') ? base : `${base}/`;
 
