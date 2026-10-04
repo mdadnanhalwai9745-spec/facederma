@@ -2,7 +2,7 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import fs from 'fs';
-import {defineConfig, Plugin} from 'vite';
+import { defineConfig, Plugin } from 'vite';
 
 function imageUploadPlugin(): Plugin {
   return {
@@ -32,7 +32,6 @@ function imageUploadPlugin(): Plugin {
                 const filePath = path.join(uploadDir, `${safeKey}.webp`);
                 fs.writeFileSync(filePath, buffer);
 
-                // If this is a hero slide (e.g. hero_slide_1), also write permanent slide file
                 const heroMatch = safeKey.match(/hero_slide_(\d+)/);
                 let finalUrl = `/uploads/${safeKey}.webp?t=${Date.now()}`;
                 if (heroMatch) {
@@ -68,7 +67,6 @@ function imageUploadPlugin(): Plugin {
             const publicDir = path.resolve(import.meta.dirname, 'public');
             const result: Record<string, string> = {};
 
-            // Check uploads
             if (fs.existsSync(uploadDir)) {
               const files = fs.readdirSync(uploadDir);
               for (const file of files) {
@@ -77,7 +75,6 @@ function imageUploadPlugin(): Plugin {
               }
             }
 
-            // Check hero directory
             if (fs.existsSync(heroDir)) {
               const files = fs.readdirSync(heroDir);
               for (const file of files) {
@@ -88,7 +85,6 @@ function imageUploadPlugin(): Plugin {
               }
             }
 
-            // Also check standard filenames in public
             const knownFallbacks: Record<string, string> = {
               '1.webp': 'hero_slide_1',
               '2 (2).jpg': 'hero_slide_2',
@@ -163,10 +159,23 @@ export default defineConfig(() => {
         '@': path.resolve(import.meta.dirname, '.'),
       },
     },
+    build: {
+      target: 'esnext',
+      minify: 'esbuild',
+      cssCodeSplit: true,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              return 'vendor';
+            }
+          },
+        },
+      },
+    },
     server: {
       hmr: process.env.DISABLE_HMR !== 'true',
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
     },
   };
 });
-
