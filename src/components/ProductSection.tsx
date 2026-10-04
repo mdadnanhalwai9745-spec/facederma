@@ -26,6 +26,7 @@ export const ProductSection: React.FC<ProductSectionProps> = ({
   onOrderClick,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [visibleCount, setVisibleCount] = useState<number>(4); // Only load first 4 initially
 
   // Extract unique categories
   const categories = ['all', ...Array.from(new Set(products.map((p) => p.category || 'Other')))];
@@ -35,13 +36,7 @@ export const ProductSection: React.FC<ProductSectionProps> = ({
       ? products
       : products.filter((p) => (p.category || 'Other') === selectedCategory);
 
-  const handleOpenStorageHub = () => {
-    if (onOpenPermanentStorage) {
-      onOpenPermanentStorage();
-    } else if (onOpenImageManager) {
-      onOpenImageManager();
-    }
-  };
+  const displayedProducts = filteredProducts.slice(0, visibleCount);
 
   return (
     <section
@@ -56,7 +51,10 @@ export const ProductSection: React.FC<ProductSectionProps> = ({
               <button
                 key={cat}
                 type="button"
-                onClick={() => setSelectedCategory(cat)}
+                onClick={() => {
+                  setSelectedCategory(cat);
+                  setVisibleCount(4); // Reset batch count on filter change
+                }}
                 className={`px-4 py-2 rounded-full text-xs font-medium tracking-wider uppercase whitespace-nowrap transition-all duration-200 cursor-pointer backdrop-blur-md shadow-2xs ${
                   selectedCategory === cat
                     ? 'bg-[#C05674] text-white shadow-xs'
@@ -69,9 +67,9 @@ export const ProductSection: React.FC<ProductSectionProps> = ({
           </div>
         </div>
 
-        {/* 13-PRODUCT RESPONSIVE GRID (2 Columns on Mobile, 2 on Tablet, 3 Cards Per Row on Desktop) */}
+        {/* RESPONSIVE GRID (Batched to first 4 for performance) */}
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8">
-          {filteredProducts.map((product, index) => (
+          {displayedProducts.map((product, index) => (
             <motion.div
               key={product.id}
               initial={{ opacity: 0, y: 16 }}
@@ -94,6 +92,18 @@ export const ProductSection: React.FC<ProductSectionProps> = ({
             </motion.div>
           ))}
         </div>
+
+        {/* Load More Button to fetch remaining formulations on demand */}
+        {visibleCount < filteredProducts.length && (
+          <div className="mt-12 text-center">
+            <button
+              onClick={() => setVisibleCount((prev) => prev + 6)}
+              className="px-6 py-3 bg-[#1E2229] text-white text-xs font-medium tracking-wider uppercase rounded-full hover:bg-[#C05674] transition-colors cursor-pointer shadow-md"
+            >
+              Load More Formulations
+            </button>
+          </div>
+        )}
 
         {/* Bottom Trust & Quality Seal */}
         <div className="mt-16 text-center flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 text-xs text-[#8E8A83] font-light tracking-wider uppercase px-4">
