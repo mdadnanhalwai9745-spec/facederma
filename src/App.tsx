@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { SiteHeader } from './components/SiteHeader';
 import { VibrantPinkHero } from './components/VibrantPinkHero';
 import { BrandDescription } from './components/BrandDescription';
-import { ProductSection } from './components/ProductSection';
+const ProductSection = lazy(() => import('./components/ProductSection'));
 import { ProductDetailPage } from './components/ProductDetailPage';
 import { AboutUsPage } from './components/AboutUsPage';
 import { ContactFooter } from './components/ContactFooter';
@@ -246,7 +246,6 @@ export default function App() {
   };
 
   const handleUploadImage = async (productId: string, dataUrl: string, isSecondary = false) => {
-    // 1. Immediately update React state with functional update: GUARANTEES no previous product image disappears!
     setProducts((prev) =>
       prev.map((p) => {
         if (p.id === productId) {
@@ -266,7 +265,6 @@ export default function App() {
       );
     }
 
-    // 2. Persist permanently to disk and IndexedDB
     try {
       const permanentUrl = await saveProductImagePermanently(productId, dataUrl, isSecondary);
       if (permanentUrl) {
@@ -317,7 +315,6 @@ export default function App() {
 
   return (
     <div className="w-full max-w-full overflow-x-clip min-h-screen bg-[#FAF9F6] text-[#1E2229] flex flex-col pt-[calc(0.375in+58px)] sm:pt-[calc(0.5in+64px)] selection:bg-[#C05674]/20 selection:text-[#1E2229]">
-      {/* Persistent Floating Navigation Bar */}
       <SiteHeader
         onGoHome={handleGoHome}
         onGoAbout={handleGoAbout}
@@ -328,7 +325,6 @@ export default function App() {
         onOpenPermanentStorage={() => setIsPermanentStorageOpen(true)}
       />
 
-      {/* Main Content: Dedicated Single Product Page OR Dedicated About Us Page OR Full Brand Portal */}
       {selectedProduct ? (
         <ProductDetailPage
           product={selectedProduct}
@@ -351,38 +347,34 @@ export default function App() {
         />
       ) : (
         <main>
-          {/* 1. Four Slide Images Hero Section */}
           <VibrantPinkHero
             products={products}
             onSelectProduct={handleSelectProduct}
             onOpenImageManager={() => setIsImageManagerOpen(true)}
           />
 
-          {/* 2. Brand Description Section */}
           <BrandDescription onLearnMore={handleGoAbout} />
 
-          {/* 3. Products Section (Interactive 13-Product Grid with 1:1 Image Frame & Hover Overlay) */}
-          <ProductSection
-            products={products}
-            contact={BRAND_CONTACT}
-            onSelectProduct={handleSelectProduct}
-            onUploadImage={handleUploadImage}
-            onOpenImageManager={() => setIsImageManagerOpen(true)}
-            onOpenPermanentStorage={() => setIsPermanentStorageOpen(true)}
-            onOrderClick={(product) => setOrderModalProduct(product)}
-            onReviewClick={(product) => setReviewModalProduct(product)}
-            onQuickViewClick={(product) => setQuickViewModalProduct(product)}
-          />
+          <Suspense fallback={<div className="py-20 text-center text-sm text-gray-500">Loading formulations...</div>}>
+            <ProductSection
+              products={products}
+              contact={BRAND_CONTACT}
+              onSelectProduct={handleSelectProduct}
+              onUploadImage={handleUploadImage}
+              onOpenImageManager={() => setIsImageManagerOpen(true)}
+              onOpenPermanentStorage={() => setIsPermanentStorageOpen(true)}
+              onOrderClick={(product) => setOrderModalProduct(product)}
+              onReviewClick={(product) => setReviewModalProduct(product)}
+              onQuickViewClick={(product) => setQuickViewModalProduct(product)}
+            />
+          </Suspense>
         </main>
       )}
 
-      {/* Contact / Footer Section with Map Embed */}
       <ContactFooter contact={BRAND_CONTACT} />
 
-      {/* Floating WhatsApp Quick Contact Button (Icon Only) */}
       <FloatingWhatsApp whatsappRaw={BRAND_CONTACT.whatsappRaw} />
 
-      {/* Glassmorphic Order Method Modal (WhatsApp / Email) */}
       <OrderMethodModal
         isOpen={!!orderModalProduct}
         product={orderModalProduct}
@@ -390,14 +382,12 @@ export default function App() {
         onClose={() => setOrderModalProduct(null)}
       />
 
-      {/* Verified Customer Review Modal */}
       <ReviewModal
         isOpen={!!reviewModalProduct}
         product={reviewModalProduct}
         onClose={() => setReviewModalProduct(null)}
       />
 
-      {/* Quick View Modal with Full Infographic Insight */}
       <QuickViewModal
         isOpen={!!quickViewModalProduct}
         product={quickViewModalProduct}
@@ -405,7 +395,6 @@ export default function App() {
         onOrderClick={(product) => setOrderModalProduct(product)}
       />
 
-      {/* Product Image Manager Modal */}
       <ImageManagerModal
         isOpen={isImageManagerOpen}
         onClose={() => setIsImageManagerOpen(false)}
@@ -414,7 +403,6 @@ export default function App() {
         onRemoveImage={handleRemoveImage}
       />
 
-      {/* Permanent Product & Catalog Storage Modal (26 Slots) */}
       <PermanentStorageModal
         isOpen={isPermanentStorageOpen}
         onClose={() => setIsPermanentStorageOpen(false)}
