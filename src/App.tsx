@@ -6,11 +6,14 @@ const ProductSection = lazy(() => import('./components/ProductSection').then(mod
 import { ProductDetailPage } from './components/ProductDetailPage';
 import { AboutUsPage } from './components/AboutUsPage';
 import { ContactFooter } from './components/ContactFooter';
-import { ImageManagerModal } from './components/ImageManagerModal';
-import { PermanentStorageModal } from './components/PermanentStorageModal';
-import { OrderMethodModal } from './components/OrderMethodModal';
-import { ReviewModal } from './components/ReviewModal';
-import { QuickViewModal } from './components/QuickViewModal';
+
+// Lazy load modals to eliminate unused JavaScript on initial load
+const ImageManagerModal = lazy(() => import('./components/ImageManagerModal').then(module => ({ default: module.ImageManagerModal })));
+const PermanentStorageModal = lazy(() => import('./components/PermanentStorageModal').then(module => ({ default: module.PermanentStorageModal })));
+const OrderMethodModal = lazy(() => import('./components/OrderMethodModal').then(module => ({ default: module.OrderMethodModal })));
+const ReviewModal = lazy(() => import('./components/ReviewModal').then(module => ({ default: module.ReviewModal })));
+const QuickViewModal = lazy(() => import('./components/QuickViewModal').then(module => ({ default: module.QuickViewModal })));
+
 import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 import { Product } from './types';
 import {
@@ -375,43 +378,45 @@ export default function App() {
 
       <FloatingWhatsApp whatsappRaw={BRAND_CONTACT.whatsappRaw} />
 
-      <OrderMethodModal
-        isOpen={!!orderModalProduct}
-        product={orderModalProduct}
-        contact={BRAND_CONTACT}
-        onClose={() => setOrderModalProduct(null)}
-      />
+      <Suspense fallback={null}>
+        <OrderMethodModal
+          isOpen={!!orderModalProduct}
+          product={orderModalProduct}
+          contact={BRAND_CONTACT}
+          onClose={() => setOrderModalProduct(null)}
+        />
 
-      <ReviewModal
-        isOpen={!!reviewModalProduct}
-        product={reviewModalProduct}
-        onClose={() => setReviewModalProduct(null)}
-      />
+        <ReviewModal
+          isOpen={!!reviewModalProduct}
+          product={reviewModalProduct}
+          onClose={() => setReviewModalProduct(null)}
+        />
 
-      <QuickViewModal
-        isOpen={!!quickViewModalProduct}
-        product={quickViewModalProduct}
-        onClose={() => setQuickViewModalProduct(null)}
-        onOrderClick={(product) => setOrderModalProduct(product)}
-      />
+        <QuickViewModal
+          isOpen={!!quickViewModalProduct}
+          product={quickViewModalProduct}
+          onClose={() => setQuickViewModalProduct(null)}
+          onOrderClick={(product) => setOrderModalProduct(product)}
+        />
 
-      <ImageManagerModal
-        isOpen={isImageManagerOpen}
-        onClose={() => setIsImageManagerOpen(false)}
-        products={products}
-        onUploadImage={handleUploadImage}
-        onRemoveImage={handleRemoveImage}
-      />
+        <ImageManagerModal
+          isOpen={isImageManagerOpen}
+          onClose={() => setIsImageManagerOpen(false)}
+          products={products}
+          onUploadImage={handleUploadImage}
+          onRemoveImage={handleRemoveImage}
+        />
 
-      <PermanentStorageModal
-        isOpen={isPermanentStorageOpen}
-        onClose={() => setIsPermanentStorageOpen(false)}
-        products={products}
-        onUploadImage={handleUploadImage}
-        onResetImage={(productId, isSecondary) =>
-          isSecondary ? handleResetCatalog(productId) : handleRemoveImage(productId)
-        }
-      />
+        <PermanentStorageModal
+          isOpen={isPermanentStorageOpen}
+          onClose={() => setIsPermanentStorageOpen(false)}
+          products={products}
+          onUploadImage={handleUploadImage}
+          onResetImage={(productId, isSecondary) =>
+            isSecondary ? handleResetCatalog(productId) : handleRemoveImage(productId)
+          }
+        />
+      </Suspense>
     </div>
   );
 }
