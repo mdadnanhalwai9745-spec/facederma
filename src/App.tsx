@@ -2,7 +2,7 @@ import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { SiteHeader } from './components/SiteHeader';
 import { VibrantPinkHero } from './components/VibrantPinkHero';
 import { BrandDescription } from './components/BrandDescription';
-const ProductSection = lazy(() => import('./components/ProductSection'));
+const ProductSection = lazy(() => import('./components/ProductSection').then(module => ({ default: module.ProductSection })));
 import { ProductDetailPage } from './components/ProductDetailPage';
 import { AboutUsPage } from './components/AboutUsPage';
 import { ContactFooter } from './components/ContactFooter';
