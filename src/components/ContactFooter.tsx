@@ -14,7 +14,6 @@ export const ContactFooter: React.FC<ContactSectionProps> = ({ contact }) => {
   };
 
   // Google Maps embed URL centered at Maharajgunj-3, Kathmandu, Nepal
-  // Coordinates for Maharajgunj-3, Kathmandu: ~27.7363, 85.3305
   const embedMapUrl = `https://maps.google.com/maps?q=Maharajgunj-3,%20Kathmandu,%20Nepal&t=&z=16&ie=UTF8&iwloc=&output=embed`;
   const googleMapsDirectionsUrl = 'https://goo.gl/maps/LqhsQdK3TWS9HZif6?g_st=aw';
 
@@ -225,7 +224,7 @@ export const ContactFooter: React.FC<ContactSectionProps> = ({ contact }) => {
                 className="font-serif font-bold text-base tracking-[0.05em] text-white inline-flex items-start"
                 style={{ fontFamily: "'Bodoni Moda', 'Cormorant Garamond', serif" }}
               >
-                Face Derma<span className="text-[9px] -mt-0.5 ml-0.5 font-semibold text-white/90">®</span>
+                Face Derma
               </span>
             </div>
             <span className="text-[10px] sm:text-[11px] font-light text-white/85">
