@@ -24,7 +24,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideData[] = [
     tagline: '100% Pure Extra Virgin Grade • Deep Nourishment Naturally',
     subheadline: 'Cold Pressed • ISO22000 Certified Grade • 100% Organic',
     badge: 'Pure Nourishment',
- defaultFallback: `${import.meta.env.BASE_URL}products/permanent/hero_banner.webp`,
+defaultFallback: `${import.meta.env.BASE_URL}products/permanent/hero_banner.webp`,
     accentColor: '#C05674',
   },
 ];
