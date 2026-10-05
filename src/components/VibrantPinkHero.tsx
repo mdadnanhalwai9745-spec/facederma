@@ -115,9 +115,21 @@ export const VibrantPinkHero: React.FC<VibrantPinkHeroProps> = ({
   useEffect(() => {
     if (isPaused || totalCatalogs <= 1) return;
 
-    timerRef.current = setInterval(() => {
-      setActiveCatalogIndex((prev) => (prev + 1) % totalCatalogs);
-    }, 3800);
+useEffect(() => {
+  if (isPaused || totalCatalogs <= 1) return;
+
+  const interval = window.setTimeout(function tick() {
+    setActiveCatalogIndex((prev) => (prev + 1) % totalCatalogs);
+
+    timerRef.current = window.setTimeout(tick, 3800);
+  }, 3800);
+
+  timerRef.current = interval;
+
+  return () => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+  };
+}, [isPaused, totalCatalogs]);
 
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
