@@ -41,8 +41,10 @@ export default function App() {
   useEffect(() => {
     const initProducts = async () => {
       // 1. Initial local state
-      const loaded = loadSavedProducts();
-      setProducts(loaded);
+    requestIdleCallback(() => {
+  const loaded = loadSavedProducts();
+  setProducts(loaded);
+});
 
       // 2. Fetch server-persisted image URLs (visible to everyone globally)
       const serverMap = await fetchServerProducts();
