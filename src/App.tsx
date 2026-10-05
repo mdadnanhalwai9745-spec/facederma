@@ -55,7 +55,11 @@ import {
   saveProductImagePermanently,
 } from './data/products';
 
-import { getPersistentImage, STORAGE_KEYS } from './utils/imageStorage';
+import {
+  getPersistentImage,
+  STORAGE_KEYS,
+} from './utils/imageStorage';
+
 import { getAssetUrl } from './utils/assetPath';
 
 export default function App() {
@@ -70,61 +74,58 @@ export default function App() {
   const [reviewModalProduct, setReviewModalProduct] = useState<Product | null>(null);
   const [quickViewModalProduct, setQuickViewModalProduct] = useState<Product | null>(null);
 
-  // ✅ SAFE INIT (no blocking, no crashes)
+  // ✅ FIXED INIT (NO NESTED USEEFFECT, NO BUGS)
   useEffect(() => {
     const init = async () => {
-      try {
-        // fast local load (for instant UI)
-        const loaded = loadSavedProducts();
-        setProducts(loaded);
+      const loaded = loadSavedProducts();
+      setProducts(loaded);
 
-        // background hydration (non-blocking)
-        setTimeout(async () => {
-          const serverMap = await fetchServerProducts();
+      const serverMap = await fetchServerProducts();
 
-          const hydrated = await Promise.all(
-            loaded.map(async (p) => {
-              let image = p.image;
-              let secondaryImage = p.secondaryImage;
+      const hydrated = await Promise.all(
+        loaded.map(async (p) => {
+          let image = p.image;
+          let secondaryImage = p.secondaryImage;
 
-              if (serverMap?.[p.id] && !serverMap[p.id].includes('_catalog')) {
-                image = serverMap[p.id];
-              }
+          if (serverMap?.[p.id] && !serverMap[p.id].includes('_catalog')) {
+            image = serverMap[p.id];
+          }
 
-              try {
-                const persisted = await getPersistentImage(STORAGE_KEYS.PRODUCT(p.id));
-                if (persisted && !persisted.includes('_catalog')) {
-                  image = persisted;
-                }
-              } catch {}
+          try {
+            const persisted = await getPersistentImage(STORAGE_KEYS.PRODUCT(p.id));
+            if (persisted && !persisted.includes('_catalog')) {
+              image = persisted;
+            }
+          } catch {}
 
-              const catalogKey = `${p.id}_catalog`;
-              if (serverMap?.[catalogKey]) {
-                secondaryImage = serverMap[catalogKey];
-              }
+          const catalogKey = `${p.id}_catalog`;
 
-              return {
-                ...p,
-                image: getAssetUrl(image),
-                secondaryImage: secondaryImage ? getAssetUrl(secondaryImage) : undefined,
-              };
-            })
-          );
+          if (serverMap?.[catalogKey]) {
+            secondaryImage = serverMap[catalogKey];
+          }
 
-          setProducts(hydrated);
-        }, 0);
+          return {
+            ...p,
+            image: getAssetUrl(image),
+            secondaryImage: secondaryImage
+              ? getAssetUrl(secondaryImage)
+              : undefined,
+          };
+        })
+      );
 
-        // deep link support
-        const hash = window.location.hash;
-        if (hash.startsWith('#product-')) {
-          const id = hash.replace('#product-', '');
-          const all = loadSavedProducts();
-          const target = all.find((p) => p.id === id);
-          if (target) setSelectedProduct(target);
-        }
-      } catch (e) {
-        console.error('Init error:', e);
+      setProducts(hydrated);
+
+      const hash = window.location.hash;
+
+      if (hash.startsWith('#product-')) {
+        const id = hash.replace('#product-', '');
+        const all = loadSavedProducts();
+        const target = all.find((p) => p.id === id);
+        if (target) setSelectedProduct(target);
       }
+
+      if (hash === '#about') setIsAboutOpen(true);
     };
 
     init();
@@ -136,12 +137,13 @@ export default function App() {
         const id = hash.replace('#product-', '');
         const all = loadSavedProducts();
         const target = all.find((p) => p.id === id);
-        if (target) setSelectedProduct(target);
+        if (target) {
+          setSelectedProduct(target);
+          setIsAboutOpen(false);
+        }
       }
 
-      if (hash === '#about') {
-        setIsAboutOpen(true);
-      }
+      if (hash === '#about') setIsAboutOpen(true);
 
       if (hash === '#hero') {
         setIsAboutOpen(false);
@@ -206,9 +208,12 @@ export default function App() {
 
   const handleRemoveImage = (productId: string) => {
     saveProductImage(productId, '');
+
     setProducts((prev) =>
       prev.map((p) =>
-        p.id === productId ? { ...p, image: INITIAL_PRODUCTS[0]?.image } : p
+        p.id === productId
+          ? { ...p, image: INITIAL_PRODUCTS?.[0]?.image || p.image }
+          : p
       )
     );
   };
@@ -225,7 +230,9 @@ export default function App() {
         onGoAbout={handleGoAbout}
         onGoProducts={handleGoProducts}
         onGoContact={handleGoContact}
-        currentView={selectedProduct ? 'product' : isAboutOpen ? 'about' : 'home'}
+        currentView={
+          selectedProduct ? 'product' : isAboutOpen ? 'about' : 'home'
+        }
       />
 
       {selectedProduct ? (
@@ -236,9 +243,13 @@ export default function App() {
           onBack={handleBackToAll}
           onSelectProduct={handleSelectProduct}
           onOrderClick={(p) => setOrderModalProduct(p)}
-          onUploadProductImage={(id, d) => handleUploadImage(id, d, false)}
+          onUploadProductImage={(id, d) =>
+            handleUploadImage(id, d, false)
+          }
           onResetProductImage={handleRemoveImage}
-          onUploadCatalog={(id, d) => handleUploadImage(id, d, true)}
+          onUploadCatalog={(id, d) =>
+            handleUploadImage(id, d, true)
+          }
           onResetCatalog={handleResetCatalog}
         />
       ) : isAboutOpen ? (
@@ -265,7 +276,9 @@ export default function App() {
               onUploadImage={handleUploadImage}
               onOrderClick={(p) => setOrderModalProduct(p)}
               onReviewClick={(p) => setReviewModalProduct(p)}
-              onQuickViewClick={(p) => setQuickViewModalProduct(p)}
+              onQuickViewClick={(p) =>
+                setQuickViewModalProduct(p)
+              }
             />
           </Suspense>
         </main>
@@ -274,7 +287,6 @@ export default function App() {
       <ContactFooter contact={BRAND_CONTACT} />
       <FloatingWhatsApp whatsappRaw={BRAND_CONTACT.whatsappRaw} />
 
-      {/* Modals */}
       <Suspense fallback={null}>
         <OrderMethodModal
           isOpen={!!orderModalProduct}
