@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import { Product } from '../types';
 import { INITIAL_PRODUCTS } from '../data/products';
 import { getPersistentImage, STORAGE_KEYS } from '../utils/imageStorage';
-import bundledHeroBanner from '../assets/hero_banner.webp';
 import { getAssetUrl } from '../utils/assetPath';
 
 export interface HeroSlideData {
@@ -25,7 +24,7 @@ export const DEFAULT_HERO_SLIDES: HeroSlideData[] = [
     tagline: '100% Pure Extra Virgin Grade • Deep Nourishment Naturally',
     subheadline: 'Cold Pressed • ISO22000 Certified Grade • 100% Organic',
     badge: 'Pure Nourishment',
-    defaultFallback: bundledHeroBanner,
+    defaultFallback: '',
     accentColor: '#C05674',
   },
 ];
@@ -50,13 +49,11 @@ export const VibrantPinkHero: React.FC<VibrantPinkHeroProps> = ({
   products = [],
   onSelectProduct,
 }) => {
-  const [heroImages, setHeroImages] = useState<Record<number, string>>({
-    2: bundledHeroBanner,
-  });
+  const [heroImages, setHeroImages] = useState<Record<number, string>>({});
   const [activeCatalogIndex, setActiveCatalogIndex] = useState<number>(0);
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [imgLoadError, setImgLoadError] = useState<boolean>(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<number | null>(null);
 
   const activeSlideData = DEFAULT_HERO_SLIDES[0];
 
@@ -115,33 +112,25 @@ export const VibrantPinkHero: React.FC<VibrantPinkHeroProps> = ({
   useEffect(() => {
     if (isPaused || totalCatalogs <= 1) return;
 
-useEffect(() => {
-  if (isPaused || totalCatalogs <= 1) return;
+    const interval = window.setInterval(() => {
+      setActiveCatalogIndex((prev) => (prev + 1) % totalCatalogs);
+    }, 3800);
 
-  const interval = window.setTimeout(function tick() {
-    setActiveCatalogIndex((prev) => (prev + 1) % totalCatalogs);
-
-    timerRef.current = window.setTimeout(tick, 3800);
-  }, 3800);
-
-  timerRef.current = interval;
-
-  return () => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-  };
-}, [isPaused, totalCatalogs]);
+    timerRef.current = interval;
 
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current !== null) {
+        clearInterval(timerRef.current);
+      }
     };
   }, [isPaused, totalCatalogs]);
 
   const currentCatalog = catalogList[activeCatalogIndex] || catalogList[0];
 
   const getActiveImage = (slide: HeroSlideData) => {
-    if (imgLoadError) return bundledHeroBanner;
+    if (imgLoadError) return slide.defaultFallback;
     if (heroImages[slide.id]) return heroImages[slide.id];
-    return slide.defaultFallback || bundledHeroBanner;
+    return slide.defaultFallback;
   };
 
   const activeImage = getActiveImage(activeSlideData);
@@ -156,20 +145,21 @@ useEffect(() => {
         className="relative w-full max-w-full h-[calc(100dvh-64px)] md:h-[calc(100vh-65px)] min-h-[580px] md:min-h-[480px] max-h-[960px] overflow-hidden bg-[#121110] text-white flex items-center justify-center border-0 outline-hidden select-none"
       >
         <div className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden bg-[#11100F] select-none pointer-events-none">
-          {/* Main Hero Banner: Set as critical LCP element with fetchpriority high */}
-          <img
-            src={activeImage}
-            alt={activeSlideData.productName}
-            referrerPolicy="no-referrer"
-            loading="eager"
-            fetchPriority="high"
-            onError={() => {
-              if (!imgLoadError) {
-                setImgLoadError(true);
-              }
-            }}
-            className="absolute inset-0 w-full h-full object-cover object-[20%_center] md:object-center select-none pointer-events-none scale-105 md:scale-100 transition-transform duration-700"
-          />
+          {activeImage && (
+            <img
+              src={activeImage}
+              alt={activeSlideData.productName}
+              referrerPolicy="no-referrer"
+              loading="eager"
+              {...{ fetchPriority: 'high' } as any}
+              onError={() => {
+                if (!imgLoadError) {
+                  setImgLoadError(true);
+                }
+              }}
+              className="absolute inset-0 w-full h-full object-cover object-[20%_center] md:object-center select-none pointer-events-none scale-105 md:scale-100 transition-transform duration-700"
+            />
+          )}
 
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/15 pointer-events-none" />
         </div>
@@ -207,7 +197,6 @@ useEffect(() => {
                   transition={{ duration: 0.65, ease: 'easeOut' }}
                   className="absolute inset-0 w-full h-full"
                 >
-                  {/* Catalog Slider Images: Changed to lazy loading to protect initial network load */}
                   <img
                     src={getAssetUrl(currentCatalog.secondaryImage || `/products/permanent/${currentCatalog.id}_catalog.jpg`)}
                     alt={`${currentCatalog.name} Clinical Catalog`}
