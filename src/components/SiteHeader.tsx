@@ -99,20 +99,16 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
         isScrolled ? 'shadow-[0_4px_20px_rgba(0,0,0,0.06)]' : 'shadow-none'
       }`}
     >
-      {/* Upper accent band across top of the header: decreased size by 10% */}
+      {/* Upper accent band across top of the header */}
       <div className="w-full h-[0.27in] sm:h-[0.36in] bg-gradient-to-r from-[#B84B6A] via-[#D56F8B] to-[#B84B6A] flex items-center justify-start px-3 sm:px-5 lg:px-8 text-white transition-[height] duration-200 relative overflow-hidden">
-        {/* Slow, steady, hard-edged shining line sweep across the entire bar */}
         <div className="animate-steady-hard-line">
-          {/* Luminous reflection body */}
           <div className="w-full h-full bg-gradient-to-r from-transparent via-white/50 to-transparent -skew-x-[24deg]" />
-          {/* Hard, razor-sharp specular solid line core */}
           <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-2 sm:w-3 bg-white shadow-[0_0_10px_#ffffff,0_0_20px_#ffffff] -skew-x-[24deg]" />
         </div>
 
-        {/* Brand statement with hard sun shine (no heating effect) */}
         <div className="relative z-10 flex items-center gap-1.5 sm:gap-2 select-none min-w-0">
           <span className="text-sun-hard-shine text-[7.5px] sm:text-[8.5px] font-bold tracking-[0.22em] sm:tracking-[0.26em] uppercase truncate">
-            Face Derma® Cosmeceutical Skincare
+            Face Derma Cosmeceutical Skincare
           </span>
           <span className="animate-sun-star text-white text-[8.5px] sm:text-[10px] font-bold select-none shrink-0" aria-hidden="true">
             ✦
@@ -120,26 +116,20 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
         </div>
       </div>
 
-      {/* ========================================================================= */}
-      {/* SINGLE UNIFIED HEADER ROW: Logo + FACE DERMA + 4 Nav Buttons + Search    */}
-      {/* ========================================================================= */}
+      {/* SINGLE UNIFIED HEADER ROW */}
       <div className="w-full px-4 sm:px-6 lg:px-10 py-2 sm:py-2.5">
         <div className="w-full flex items-center justify-between gap-4 sm:gap-6">
-          {/* LEFT: Logo Medallion + FACE DERMA + 4 Navigation Buttons directly on its right */}
           <div className="flex items-center gap-4 sm:gap-6 lg:gap-8 min-w-0">
-            {/* Logo Medallion + FACE DERMA */}
             <a
               href="#hero"
               onClick={handleHomeClick}
               className="group flex items-center gap-2.5 sm:gap-3 cursor-pointer transition-transform hover:scale-[1.01] shrink-0"
               aria-label="Face Derma Home"
             >
-              {/* Circular Medallion Logo (Increased by 20% to 46px) */}
               <div className="shrink-0 flex items-center justify-center p-0.5">
                 <FDLogo size={46} className="transition-transform group-hover:scale-105 duration-300" />
               </div>
 
-              {/* FACE DERMA Text & Tagline */}
               <div className="flex flex-col text-left justify-center">
                 <div className="flex items-center">
                   <span
@@ -148,12 +138,6 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
                   >
                     FACE DERMA
                   </span>
-                  <span
-                    className="text-[9px] font-serif font-semibold text-[#8E8A83] -mt-1 ml-0.5"
-                    style={{ fontFamily: "'Bodoni Moda', serif" }}
-                  >
-                    ®
-                  </span>
                 </div>
                 <span className="text-[7.5px] sm:text-[8.5px] font-medium tracking-[0.22em] uppercase text-[#7D786F] mt-0.5">
                   COSMECEUTICAL SKINCARE
@@ -161,9 +145,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
               </div>
             </a>
 
-            {/* The 4 Navigation Buttons directly on the RIGHT SIDE of website name (5% thicker typography) */}
             <nav className="hidden md:flex items-center gap-x-6 lg:gap-x-9 text-[11px] lg:text-[12.5px] font-extrabold tracking-[0.22em] uppercase text-[#1E2229]">
-              {/* HOME */}
               <a
                 href="#hero"
                 onClick={handleHomeClick}
@@ -178,7 +160,6 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
                 )}
               </a>
 
-              {/* PRODUCTS with Dropdown */}
               <div className="relative group py-1">
                 <a
                   href="#products"
@@ -192,7 +173,6 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
                   <ChevronDown className="w-3 h-3 text-gray-500 group-hover:text-[#C05674] group-hover:rotate-180 transition-transform duration-200" />
                 </a>
 
-                {/* Mega Dropdown for Categories */}
                 <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 min-w-[220px]">
                   <div className="bg-white rounded-xl shadow-xl border border-[#EAE5DD] py-2 px-1 text-left">
                     <a
@@ -227,7 +207,6 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
                 </div>
               </div>
 
-              {/* ABOUT */}
               <a
                 href="#about"
                 onClick={handleAboutClick}
@@ -242,7 +221,6 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
                 )}
               </a>
 
-              {/* CONTACT */}
               <a
                 href="#contact"
                 onClick={handleContactClick}
@@ -254,9 +232,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
             </nav>
           </div>
 
-          {/* RIGHT: Search Action + Mobile Hamburger */}
           <div className="flex items-center justify-end gap-2 sm:gap-3 shrink-0">
-            {/* Search Icon Button */}
             <button
               type="button"
               onClick={() => setIsSearchOpen(!isSearchOpen)}
@@ -267,7 +243,6 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
               <Search className="w-4 h-4 sm:w-5 sm:h-5 stroke-[1.8]" />
             </button>
 
-            {/* Mobile Menu Toggle */}
             <div className="flex items-center md:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -281,7 +256,6 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
           </div>
         </div>
 
-        {/* Expandable Search Input Bar */}
         <AnimatePresence>
           {isSearchOpen && (
             <motion.div
@@ -312,9 +286,6 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
         </AnimatePresence>
       </div>
 
-      {/* ========================================================================= */}
-      {/* 3. MOBILE NAVIGATION DRAWER (Slide down on hamburger tap)                 */}
-      {/* ========================================================================= */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -357,7 +328,7 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
 
               <div className="pt-3 border-t border-[#EAE5DD]">
                 <a
-                  href="https://wa.me/9779704491600?text=Hello%20Face%20Derma%C2%AE%2C%20I%20would%20like%20to%20inquire%20about%20your%20cosmeceutical%20skincare%20products."
+                  href="https://wa.me/9779704491600?text=Hello%20Face%20Derma%2C%20I%20would%20like%20to%20inquire%20about%20your%20cosmeceutical%20skincare%20products."
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#20BA5A] text-white text-xs font-bold tracking-wider uppercase flex items-center justify-center gap-2 shadow-sm transition-colors"
@@ -373,4 +344,3 @@ export const SiteHeader: React.FC<SiteHeaderProps> = ({
     </header>
   );
 };
-
