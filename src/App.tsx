@@ -2,20 +2,50 @@ import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { SiteHeader } from './components/SiteHeader';
 import { VibrantPinkHero } from './components/VibrantPinkHero';
 import { BrandDescription } from './components/BrandDescription';
-const ProductSection = lazy(() => import('./components/ProductSection').then(module => ({ default: module.ProductSection })));
+
+const ProductSection = lazy(() =>
+  import('./components/ProductSection').then((m) => ({
+    default: m.ProductSection,
+  }))
+);
+
 import { ProductDetailPage } from './components/ProductDetailPage';
 import { AboutUsPage } from './components/AboutUsPage';
 import { ContactFooter } from './components/ContactFooter';
 
-// Lazy load modals to eliminate unused JavaScript on initial load
-const ImageManagerModal = lazy(() => import('./components/ImageManagerModal').then(module => ({ default: module.ImageManagerModal })));
-const PermanentStorageModal = lazy(() => import('./components/PermanentStorageModal').then(module => ({ default: module.PermanentStorageModal })));
-const OrderMethodModal = lazy(() => import('./components/OrderMethodModal').then(module => ({ default: module.OrderMethodModal })));
-const ReviewModal = lazy(() => import('./components/ReviewModal').then(module => ({ default: module.ReviewModal })));
-const QuickViewModal = lazy(() => import('./components/QuickViewModal').then(module => ({ default: module.QuickViewModal })));
+const ImageManagerModal = lazy(() =>
+  import('./components/ImageManagerModal').then((m) => ({
+    default: m.ImageManagerModal,
+  }))
+);
+
+const PermanentStorageModal = lazy(() =>
+  import('./components/PermanentStorageModal').then((m) => ({
+    default: m.PermanentStorageModal,
+  }))
+);
+
+const OrderMethodModal = lazy(() =>
+  import('./components/OrderMethodModal').then((m) => ({
+    default: m.OrderMethodModal,
+  }))
+);
+
+const ReviewModal = lazy(() =>
+  import('./components/ReviewModal').then((m) => ({
+    default: m.ReviewModal,
+  }))
+);
+
+const QuickViewModal = lazy(() =>
+  import('./components/QuickViewModal').then((m) => ({
+    default: m.QuickViewModal,
+  }))
+);
 
 import { FloatingWhatsApp } from './components/FloatingWhatsApp';
 import { Product } from './types';
+
 import {
   BRAND_CONTACT,
   INITIAL_PRODUCTS,
@@ -24,314 +54,178 @@ import {
   fetchServerProducts,
   saveProductImagePermanently,
 } from './data/products';
-import { getPersistentImage, removePersistentImage, STORAGE_KEYS } from './utils/imageStorage';
+
+import { getPersistentImage, STORAGE_KEYS } from './utils/imageStorage';
 import { getAssetUrl } from './utils/assetPath';
 
 export default function App() {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isAboutOpen, setIsAboutOpen] = useState(false);
+
   const [isImageManagerOpen, setIsImageManagerOpen] = useState(false);
   const [isPermanentStorageOpen, setIsPermanentStorageOpen] = useState(false);
+
   const [orderModalProduct, setOrderModalProduct] = useState<Product | null>(null);
   const [reviewModalProduct, setReviewModalProduct] = useState<Product | null>(null);
   const [quickViewModalProduct, setQuickViewModalProduct] = useState<Product | null>(null);
 
-  // Initialize products from server (for worldwide visitors) + local cache fallback
+  // ✅ SAFE INIT (no blocking, no crashes)
   useEffect(() => {
-    const initProducts = async () => {
-      // 1. Initial local state
-  useEffect(() => {
-  const timer = setTimeout(() => {
-    const loaded = loadSavedProducts();
-    setProducts(loaded);
-  }, 0);
+    const init = async () => {
+      try {
+        // fast local load (for instant UI)
+        const loaded = loadSavedProducts();
+        setProducts(loaded);
 
-  return () => clearTimeout(timer);
-}, []);
+        // background hydration (non-blocking)
+        setTimeout(async () => {
+          const serverMap = await fetchServerProducts();
 
-      // 2. Fetch server-persisted image URLs (visible to everyone globally)
-      const serverMap = await fetchServerProducts();
+          const hydrated = await Promise.all(
+            loaded.map(async (p) => {
+              let image = p.image;
+              let secondaryImage = p.secondaryImage;
 
-      // 3. Hydrate product images and catalog flyers with multi-layer persistence
-      const hydrated = await Promise.all(
-        loaded.map(async (p) => {
-          let finalImage = p.image;
-          let finalSecondary = p.secondaryImage;
-
-          // Priority 1: Check server permanent product image
-          if (serverMap && serverMap[p.id] && !serverMap[p.id].includes('_catalog')) {
-            finalImage = serverMap[p.id];
-          } else {
-            // Priority 2: Check IndexedDB persistent storage
-            try {
-              const persistedImg = await getPersistentImage(STORAGE_KEYS.PRODUCT(p.id));
-              if (persistedImg && !persistedImg.includes('_catalog')) {
-                finalImage = persistedImg;
+              if (serverMap?.[p.id] && !serverMap[p.id].includes('_catalog')) {
+                image = serverMap[p.id];
               }
-            } catch {
-              // fallback to p.image
-            }
-          }
-          if (finalImage && finalImage.includes('_catalog')) {
-            finalImage = '';
-          }
-          if (!finalImage) {
-            finalImage = p.image || `/products/permanent/${p.id}.png`;
-          }
 
-          // Catalog flyer priority
-          const catalogKey = `${p.id}_catalog`;
-          if (serverMap && serverMap[catalogKey]) {
-            finalSecondary = serverMap[catalogKey];
-          } else {
-            try {
-              const persistedCatalog = await getPersistentImage(`${STORAGE_KEYS.PRODUCT(p.id)}_secondary`);
-              if (persistedCatalog) {
-                finalSecondary = persistedCatalog;
+              try {
+                const persisted = await getPersistentImage(STORAGE_KEYS.PRODUCT(p.id));
+                if (persisted && !persisted.includes('_catalog')) {
+                  image = persisted;
+                }
+              } catch {}
+
+              const catalogKey = `${p.id}_catalog`;
+              if (serverMap?.[catalogKey]) {
+                secondaryImage = serverMap[catalogKey];
               }
-            } catch {
-              // fallback to p.secondaryImage
-            }
-          }
 
-          return {
-            ...p,
-            image: getAssetUrl(finalImage),
-            secondaryImage: finalSecondary ? getAssetUrl(finalSecondary) : undefined,
-          };
-        })
-      );
-      setProducts(hydrated);
+              return {
+                ...p,
+                image: getAssetUrl(image),
+                secondaryImage: secondaryImage ? getAssetUrl(secondaryImage) : undefined,
+              };
+            })
+          );
 
-      // 4. Check hash for deep link e.g. #product-fd-01 or #about
-      const hash = window.location.hash;
-      if (hash.startsWith('#product-')) {
-        const prodId = hash.replace('#product-', '');
-        const target = hydrated.find((p) => p.id === prodId);
-        if (target) {
-          setSelectedProduct(target);
-          setIsAboutOpen(false);
+          setProducts(hydrated);
+        }, 0);
+
+        // deep link support
+        const hash = window.location.hash;
+        if (hash.startsWith('#product-')) {
+          const id = hash.replace('#product-', '');
+          const all = loadSavedProducts();
+          const target = all.find((p) => p.id === id);
+          if (target) setSelectedProduct(target);
         }
-      } else if (hash === '#about' || hash === '#about-page') {
-        setSelectedProduct(null);
-        setIsAboutOpen(true);
+      } catch (e) {
+        console.error('Init error:', e);
       }
     };
 
-    initProducts();
+    init();
 
-    const handleHashChange = () => {
+    const onHashChange = () => {
       const hash = window.location.hash;
+
       if (hash.startsWith('#product-')) {
-        const prodId = hash.replace('#product-', '');
+        const id = hash.replace('#product-', '');
         const all = loadSavedProducts();
-        const target = all.find((p) => p.id === prodId);
-        if (target) {
-          setSelectedProduct(target);
-          setIsAboutOpen(false);
-        }
-      } else if (hash === '#about' || hash === '#about-page') {
-        setSelectedProduct(null);
+        const target = all.find((p) => p.id === id);
+        if (target) setSelectedProduct(target);
+      }
+
+      if (hash === '#about') {
         setIsAboutOpen(true);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else if (hash === '#hero') {
-        setSelectedProduct(null);
+      }
+
+      if (hash === '#hero') {
         setIsAboutOpen(false);
-        setTimeout(() => {
-          const heroEl = document.getElementById('hero') || document.getElementById('vibrant-hero-section');
-          if (heroEl) {
-            heroEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          } else {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }
-        }, 50);
-      } else if (hash === '' || hash === '#products') {
         setSelectedProduct(null);
-        setIsAboutOpen(false);
-        if (hash === '#products') {
-          setTimeout(() => {
-            const el = document.getElementById('products');
-            if (el) {
-              const navHeight = 70;
-              const rect = el.getBoundingClientRect();
-              const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-              window.scrollTo({
-                top: rect.top + scrollTop - navHeight,
-                behavior: 'smooth',
-              });
-            }
-          }, 60);
-        }
       }
     };
 
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
   }, []);
 
   const handleSelectProduct = (product: Product) => {
     setSelectedProduct(product);
-    setIsAboutOpen(false);
     window.location.hash = `#product-${product.id}`;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBackToAll = () => {
     setSelectedProduct(null);
-    setIsAboutOpen(false);
     window.location.hash = '#products';
-
-    const scrollToProducts = () => {
-      const el = document.getElementById('products');
-      if (el) {
-        const navHeight = 70;
-        const rect = el.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        window.scrollTo({
-          top: rect.top + scrollTop - navHeight,
-          behavior: 'smooth',
-        });
-      }
-    };
-
-    requestAnimationFrame(scrollToProducts);
-    setTimeout(scrollToProducts, 40);
-    setTimeout(scrollToProducts, 120);
   };
 
   const handleGoHome = () => {
     setSelectedProduct(null);
     setIsAboutOpen(false);
     window.location.hash = '#hero';
-    setTimeout(() => {
-      const heroEl = document.getElementById('hero') || document.getElementById('vibrant-hero-section');
-      if (heroEl) {
-        heroEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      } else {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
-    }, 50);
   };
 
   const handleGoAbout = () => {
-    setSelectedProduct(null);
     setIsAboutOpen(true);
-    window.location.hash = '#about-page';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.location.hash = '#about';
   };
 
   const handleGoProducts = () => {
-    setSelectedProduct(null);
     setIsAboutOpen(false);
+    setSelectedProduct(null);
     window.location.hash = '#products';
-
-    const scrollToProducts = () => {
-      const el = document.getElementById('products');
-      if (el) {
-        const navHeight = 70;
-        const rect = el.getBoundingClientRect();
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        window.scrollTo({
-          top: rect.top + scrollTop - navHeight,
-          behavior: 'smooth',
-        });
-      }
-    };
-
-    requestAnimationFrame(scrollToProducts);
-    setTimeout(scrollToProducts, 40);
-    setTimeout(scrollToProducts, 120);
   };
 
   const handleGoContact = () => {
-    setSelectedProduct(null);
-    setIsAboutOpen(false);
     window.location.hash = '#contact';
-    setTimeout(() => {
-      const el = document.getElementById('contact');
-      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 50);
   };
 
-  const handleUploadImage = async (productId: string, dataUrl: string, isSecondary = false) => {
+  const handleUploadImage = async (
+    productId: string,
+    dataUrl: string,
+    isSecondary = false
+  ) => {
     setProducts((prev) =>
-      prev.map((p) => {
-        if (p.id === productId) {
-          return isSecondary ? { ...p, secondaryImage: dataUrl } : { ...p, image: dataUrl };
-        }
-        return p;
-      })
+      prev.map((p) =>
+        p.id === productId
+          ? isSecondary
+            ? { ...p, secondaryImage: dataUrl }
+            : { ...p, image: dataUrl }
+          : p
+      )
     );
 
-    if (selectedProduct && selectedProduct.id === productId) {
-      setSelectedProduct((prev) =>
-        prev
-          ? isSecondary
-            ? { ...prev, secondaryImage: dataUrl }
-            : { ...prev, image: dataUrl }
-          : null
-      );
-    }
-
     try {
-      const permanentUrl = await saveProductImagePermanently(productId, dataUrl, isSecondary);
-      if (permanentUrl) {
-        setProducts((prev) =>
-          prev.map((p) => {
-            if (p.id === productId) {
-              return isSecondary ? { ...p, secondaryImage: permanentUrl } : { ...p, image: permanentUrl };
-            }
-            return p;
-          })
-        );
-        if (selectedProduct && selectedProduct.id === productId) {
-          setSelectedProduct((prev) =>
-            prev
-              ? isSecondary
-                ? { ...prev, secondaryImage: permanentUrl }
-                : { ...prev, image: permanentUrl }
-              : null
-          );
-        }
-      }
-    } catch (e) {
-      console.warn('Permanent save error:', e);
-    }
+      await saveProductImagePermanently(productId, dataUrl, isSecondary);
+    } catch {}
   };
 
   const handleRemoveImage = (productId: string) => {
     saveProductImage(productId, '');
-    const defaultInitial = INITIAL_PRODUCTS.find((init) => init.id === productId);
-    const fallbackImage = defaultInitial?.image || '/products/fd-moist-moisturizer.svg';
     setProducts((prev) =>
-      prev.map((p) => (p.id === productId ? { ...p, image: fallbackImage } : p))
+      prev.map((p) =>
+        p.id === productId ? { ...p, image: INITIAL_PRODUCTS[0]?.image } : p
+      )
     );
   };
 
   const handleResetCatalog = async (productId: string) => {
     saveProductImage(productId, '', true);
     await saveProductImagePermanently(productId, '', true);
-    const defaultInitial = INITIAL_PRODUCTS.find((init) => init.id === productId);
-    const fallbackCatalog = defaultInitial?.secondaryImage || undefined;
-    setProducts((prev) =>
-      prev.map((p) => (p.id === productId ? { ...p, secondaryImage: fallbackCatalog } : p))
-    );
-    if (selectedProduct && selectedProduct.id === productId) {
-      setSelectedProduct((prev) => (prev ? { ...prev, secondaryImage: fallbackCatalog } : null));
-    }
   };
 
   return (
-    <div className="w-full max-w-full overflow-x-clip min-h-screen bg-[#FAF9F6] text-[#1E2229] flex flex-col pt-[calc(0.375in+58px)] sm:pt-[calc(0.5in+64px)] selection:bg-[#C05674]/20 selection:text-[#1E2229]">
+    <div className="w-full min-h-screen bg-[#FAF9F6] text-[#1E2229] flex flex-col">
       <SiteHeader
         onGoHome={handleGoHome}
         onGoAbout={handleGoAbout}
         onGoProducts={handleGoProducts}
         onGoContact={handleGoContact}
         currentView={selectedProduct ? 'product' : isAboutOpen ? 'about' : 'home'}
-        onOpenImageManager={() => setIsImageManagerOpen(true)}
-        onOpenPermanentStorage={() => setIsPermanentStorageOpen(true)}
       />
 
       {selectedProduct ? (
@@ -341,10 +235,10 @@ export default function App() {
           contact={BRAND_CONTACT}
           onBack={handleBackToAll}
           onSelectProduct={handleSelectProduct}
-          onOrderClick={(product) => setOrderModalProduct(product)}
-          onUploadProductImage={(productId, dataUrl) => handleUploadImage(productId, dataUrl, false)}
-          onResetProductImage={(productId) => handleRemoveImage(productId)}
-          onUploadCatalog={(productId, dataUrl) => handleUploadImage(productId, dataUrl, true)}
+          onOrderClick={(p) => setOrderModalProduct(p)}
+          onUploadProductImage={(id, d) => handleUploadImage(id, d, false)}
+          onResetProductImage={handleRemoveImage}
+          onUploadCatalog={(id, d) => handleUploadImage(id, d, true)}
           onResetCatalog={handleResetCatalog}
         />
       ) : isAboutOpen ? (
@@ -359,31 +253,28 @@ export default function App() {
           <VibrantPinkHero
             products={products}
             onSelectProduct={handleSelectProduct}
-            onOpenImageManager={() => setIsImageManagerOpen(true)}
           />
 
           <BrandDescription onLearnMore={handleGoAbout} />
 
-          <Suspense fallback={<div className="py-20 text-center text-sm text-gray-500">Loading formulations...</div>}>
+          <Suspense fallback={<div className="p-10 text-center">Loading...</div>}>
             <ProductSection
               products={products}
               contact={BRAND_CONTACT}
               onSelectProduct={handleSelectProduct}
               onUploadImage={handleUploadImage}
-              onOpenImageManager={() => setIsImageManagerOpen(true)}
-              onOpenPermanentStorage={() => setIsPermanentStorageOpen(true)}
-              onOrderClick={(product) => setOrderModalProduct(product)}
-              onReviewClick={(product) => setReviewModalProduct(product)}
-              onQuickViewClick={(product) => setQuickViewModalProduct(product)}
+              onOrderClick={(p) => setOrderModalProduct(p)}
+              onReviewClick={(p) => setReviewModalProduct(p)}
+              onQuickViewClick={(p) => setQuickViewModalProduct(p)}
             />
           </Suspense>
         </main>
       )}
 
       <ContactFooter contact={BRAND_CONTACT} />
-
       <FloatingWhatsApp whatsappRaw={BRAND_CONTACT.whatsappRaw} />
 
+      {/* Modals */}
       <Suspense fallback={null}>
         <OrderMethodModal
           isOpen={!!orderModalProduct}
@@ -402,7 +293,6 @@ export default function App() {
           isOpen={!!quickViewModalProduct}
           product={quickViewModalProduct}
           onClose={() => setQuickViewModalProduct(null)}
-          onOrderClick={(product) => setOrderModalProduct(product)}
         />
 
         <ImageManagerModal
@@ -418,9 +308,7 @@ export default function App() {
           onClose={() => setIsPermanentStorageOpen(false)}
           products={products}
           onUploadImage={handleUploadImage}
-          onResetImage={(productId, isSecondary) =>
-            isSecondary ? handleResetCatalog(productId) : handleRemoveImage(productId)
-          }
+          onResetImage={handleRemoveImage}
         />
       </Suspense>
     </div>
