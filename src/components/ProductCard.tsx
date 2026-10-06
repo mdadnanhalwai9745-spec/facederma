@@ -23,14 +23,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 
   const [candidateIdx, setCandidateIdx] = useState(0);
   const [hasFailed, setHasFailed] = useState(false);
+// Strictly only include images that are specified and not catalogs
+  const baseUrl = import.meta.env.BASE_URL || '/';
 
-  // Strictly only include images that are specified and not catalogs
   const candidateImages: string[] = [
     product.image ? getAssetUrl(product.image) : '',
     initialMatch?.image ? getAssetUrl(initialMatch.image) : '',
-    getAssetUrl(`/products/permanent/${product.id}.png`),
-    getAssetUrl(`/products/permanent/${product.id}.webp`),
-    getAssetUrl(`/products/permanent/${product.id}.jpg`),
+    `${baseUrl}products/permanent/${product.id}.png`.replace(/\/+/g, '/'),
+    `${baseUrl}products/permanent/${product.id}.webp`.replace(/\/+/g, '/'),
+    `${baseUrl}products/permanent/${product.id}.jpg`.replace(/\/+/g, '/'),
   ].filter((src): src is string => typeof src === 'string' && src.length > 0 && !src.includes('_catalog'));
 
   useEffect(() => {
