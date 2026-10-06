@@ -142,7 +142,7 @@ export const VibrantPinkHero: React.FC<VibrantPinkHeroProps> = ({
       className="w-full max-w-full flex flex-col font-sans select-none bg-[#121110] overflow-hidden scroll-mt-20"
     >
       <div
-        className="relative w-full max-w-full h-[calc(100dvh-64px)] md:h-[calc(100vh-65px)] min-h-[580px] md:min-h-[480px] max-h-[960px] overflow-hidden bg-[#121110] text-white flex items-center justify-center border-0 outline-hidden select-none"
+        className="relative w-full max-w-full h-[calc(100dvh-64px)] md:h-[calc(100vh-65px)] min-h-[580px] md:min-h-[480px] max-h-[960px] overflow-hidden bg-[#121110] text-white flex items-center justify-end border-0 outline-hidden select-none px-4 sm:px-8 lg:px-16"
       >
         <div className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden bg-[#11100F] select-none pointer-events-none">
           {activeImage && (
@@ -161,7 +161,7 @@ export const VibrantPinkHero: React.FC<VibrantPinkHeroProps> = ({
             />
           )}
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/15 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent pointer-events-none" />
         </div>
 
         <motion.div
@@ -170,7 +170,7 @@ export const VibrantPinkHero: React.FC<VibrantPinkHeroProps> = ({
           transition={{ repeat: Infinity, duration: 4.5, ease: 'easeInOut' }}
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
-          className="relative md:absolute z-25 w-[92%] sm:w-[84%] md:w-[60%] lg:w-[55%] xl:w-[52%] max-w-[804px] my-6 md:my-0 md:top-1/2 md:-translate-y-1/2 md:right-6 lg:right-14 xl:right-16 aspect-[1.41/1] select-none group mx-auto"
+          className="relative z-25 w-[92%] sm:w-[84%] md:w-[50%] lg:w-[45%] xl:w-[42%] max-w-[700px] my-auto aspect-[1.41/1] select-none group mr-0 md:mr-8 lg:mr-16"
         >
           <div className="absolute -inset-1.5 rounded-2xl lg:rounded-3xl bg-gradient-to-tr from-[#C05674]/30 via-transparent to-transparent blur-xl opacity-80 pointer-events-none" />
           <div className="relative w-full h-full rounded-2xl lg:rounded-3xl border-2 border-white/30 shadow-[0_20px_50px_rgba(0,0,0,0.55),0_0_35px_rgba(192,86,116,0.2)] overflow-hidden bg-black/40 backdrop-blur-sm">
