@@ -139,10 +139,10 @@ export const VibrantPinkHero: React.FC<VibrantPinkHeroProps> = ({
     <section
       id="hero"
       data-section="vibrant-hero-section"
-      className="w-full max-w-full flex flex-col font-sans select-none bg-[#121110] overflow-hidden scroll-mt-20"
+      className="w-full max-w-full flex flex-col font-sans select-none bg-[#121110] overflow-hidden scroll-mt-20 box-border"
     >
       <div
-        className="relative w-full max-w-full h-[calc(100dvh-64px)] md:h-[calc(100vh-65px)] min-h-[580px] md:min-h-[480px] max-h-[960px] overflow-hidden bg-[#121110] text-white flex items-center justify-end border-0 outline-hidden select-none px-4 sm:px-8 lg:px-16"
+        className="relative w-full max-w-full h-[calc(100dvh-64px)] min-h-[500px] overflow-hidden bg-[#121110] text-white flex items-center justify-end border-0 outline-hidden select-none px-4 sm:px-8 lg:px-16 box-border"
       >
         <div className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden bg-[#11100F] select-none pointer-events-none">
           {activeImage && (
