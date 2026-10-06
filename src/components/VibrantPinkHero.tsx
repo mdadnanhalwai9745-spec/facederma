@@ -171,8 +171,7 @@ export const VibrantPinkHero: React.FC<VibrantPinkHeroProps> = ({
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         className="relative md:absolute z-25 w-[92%] sm:w-[84%] md:w-[60%] lg:w-[55%] xl:w-[52%] max-w-[804px] my-6 md:my-0 md:top-1/2 md:-translate-y-1/2 md:right-6 lg:right-14 xl:right-16 aspect-[1.41/1] select-none group mx-auto"
-          <div className="absolute -inset-1.5 rounded-2xl lg:rounded-3xl bg-gradient-to-tr from-[#C05674]/30 via-transparent to-transparent blur-xl opacity-80 pointer-events-none" />
-
+        <div className="absolute -inset-1.5 rounded-2xl lg:rounded-3xl bg-gradient-to-tr from-[#C05674]/30 via-transparent to-transparent blur-xl opacity-80 pointer-events-none" />
           <div className="relative w-full h-full rounded-2xl lg:rounded-3xl border-2 border-white/30 shadow-[0_20px_50px_rgba(0,0,0,0.55),0_0_35px_rgba(192,86,116,0.2)] overflow-hidden bg-black/40 backdrop-blur-sm">
             <div className="absolute top-0 inset-x-4 sm:inset-x-6 h-[1.5px] bg-gradient-to-r from-transparent via-[#C05674]/80 to-transparent z-25 pointer-events-none" />
             <div className="absolute bottom-0 inset-x-4 sm:inset-x-6 h-[1.5px] bg-gradient-to-r from-transparent via-[#C05674]/80 to-transparent z-25 pointer-events-none" />
