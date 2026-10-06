@@ -16,14 +16,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   product,
   onSelectProduct,
   onOrderClick,
-  onUploadImage,
 }) => {
   const rating = product.rating || 4.9;
   const initialMatch = INITIAL_PRODUCTS.find((p) => p.id === product.id);
 
   const [candidateIdx, setCandidateIdx] = useState(0);
   const [hasFailed, setHasFailed] = useState(false);
-// Strictly only include images that are specified and not catalogs
+
+  // Strictly only include images that are specified and not catalogs
   const baseUrl = import.meta.env.BASE_URL || '/';
 
   const candidateImages: string[] = [
@@ -72,8 +72,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </span>
           </div>
         )}
-
-
 
         {/* Product Image Presentation (Strict Photo Slot - Edge to Edge, No White Borders) */}
         {activeSrc ? (
