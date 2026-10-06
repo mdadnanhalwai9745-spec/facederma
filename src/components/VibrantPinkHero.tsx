@@ -142,8 +142,7 @@ export const VibrantPinkHero: React.FC<VibrantPinkHeroProps> = ({
       className="w-full max-w-full flex flex-col font-sans select-none bg-[#121110] overflow-hidden scroll-mt-20 box-border"
     >
       <div
-        className="relative w-full max-w-full h-[calc(100dvh-64px)] min-h-[500px] overflow-hidden bg-[#121110] text-white flex items-center justify-end border-0 outline-hidden select-none px-4 sm:px-8 lg:px-16 box-border"
-      >
+       className="relative w-full max-w-full h-[100dvh] min-h-[500px] overflow-hidden bg-[#121110] text-white flex items-center justify-end border-0 outline-hidden select-none px-4 sm:px-8 lg:px-16 box-border"
         <div className="absolute inset-0 w-full h-full flex items-center justify-center overflow-hidden bg-[#11100F] select-none pointer-events-none">
           {activeImage && (
             <img
