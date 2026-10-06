@@ -247,7 +247,8 @@ export const VibrantPinkHero: React.FC<VibrantPinkHeroProps> = ({
               </div>
             </div>
           </div>
-        </motion.div>
-      </div>
-    </section>
-  );
+      </motion.div>
+    </div>
+  </section>
+);
+};
