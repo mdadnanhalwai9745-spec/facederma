@@ -205,7 +205,7 @@ export const VibrantPinkHero: React.FC<VibrantPinkHeroProps> = ({
                 </motion.div>
               </AnimatePresence>
 
-              <div className="absolute bottom-3 inset-x-0 z-30 flex items-center justify-center gap-1.5 pointer-events-auto">
+            <div className="absolute bottom-3 inset-x-0 z-30 flex items-center justify-center gap-1.5 pointer-events-auto">
                 <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/55 backdrop-blur-md border border-white/15">
                   {catalogList.map((cat, idx) => (
                     <button
@@ -231,24 +231,4 @@ export const VibrantPinkHero: React.FC<VibrantPinkHeroProps> = ({
       </div>
     </section>
   );
-};
-                        e.stopPropagation();
-                        setActiveCatalogIndex(idx);
-                      }}
-                      className={`h-1.5 rounded-full transition-all duration-300 ${
-                        idx === activeCatalogIndex
-                          ? 'w-5 bg-[#C05674]'
-                          : 'w-1.5 bg-white/40 hover:bg-white/70'
-                      }`}
-                      title={`Go to ${cat.name}`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-      </motion.div>
-    </div>
-  </section>
-);
 };
