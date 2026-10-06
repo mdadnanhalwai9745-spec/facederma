@@ -23,17 +23,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const [candidateIdx, setCandidateIdx] = useState(0);
   const [hasFailed, setHasFailed] = useState(false);
 
-  // Strictly only include images that are specified and not catalogs
+ // Strictly only include images that are specified and not catalogs
   const baseUrl = import.meta.env.BASE_URL || '/';
+  const numericId = product.id.replace(/\D/g, ''); // Extracts '01' from 'fd-01' or 'product-01'
 
   const candidateImages: string[] = [
     product.image ? getAssetUrl(product.image) : '',
     initialMatch?.image ? getAssetUrl(initialMatch.image) : '',
-    `${baseUrl}products/permanent/${product.id}.png`.replace(/\/+/g, '/'),
+    numericId ? `${baseUrl}products/permanent/product-${numericId}.webp.webp`.replace(/\/+/g, '/') : '',
+    numericId ? `${baseUrl}products/permanent/product-${numericId}.webp`.replace(/\/+/g, '/') : '',
+    numericId ? `${baseUrl}products/permanent/product-${numericId}.jpg`.replace(/\/+/g, '/') : '',
     `${baseUrl}products/permanent/${product.id}.webp`.replace(/\/+/g, '/'),
+    `${baseUrl}products/permanent/${product.id}.png`.replace(/\/+/g, '/'),
     `${baseUrl}products/permanent/${product.id}.jpg`.replace(/\/+/g, '/'),
   ].filter((src): src is string => typeof src === 'string' && src.length > 0 && !src.includes('_catalog'));
-
   useEffect(() => {
     setCandidateIdx(0);
     setHasFailed(false);
