@@ -251,4 +251,3 @@ export const VibrantPinkHero: React.FC<VibrantPinkHeroProps> = ({
       </div>
     </section>
   );
-};
