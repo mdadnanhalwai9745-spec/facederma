@@ -200,7 +200,7 @@ export const VibrantPinkHero: React.FC<VibrantPinkHeroProps> = ({
                     src={getAssetUrl(currentCatalog.secondaryImage || `/products/permanent/${currentCatalog.id}_catalog.jpg`)}
                     alt={`${currentCatalog.name} Clinical Catalog`}
                     className="w-full h-full object-cover select-none rounded-xl lg:rounded-2xl"
-                   loading="eager"
+                  loading="lazy"
                   />
                 </motion.div>
               </AnimatePresence>
