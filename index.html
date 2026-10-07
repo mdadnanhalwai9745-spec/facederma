@@ -1,35 +1,60 @@
+```html
 <!doctype html>
 <html lang="en" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <title>Face Derma Skincare</title>
-    <meta name="description" content="World-class luxury one-page cosmetic website for Face Derma clinical skincare brand." />
+
+    <meta
+      name="description"
+      content="Face Derma clinical skincare — premium skincare products designed for everyday luxury."
+    />
+
     <meta property="og:title" content="Face Derma Skincare" />
-    <meta property="og:description" content="World-class luxury one-page cosmetic website for Face Derma clinical skincare brand." />
+    <meta
+      property="og:description"
+      content="Face Derma clinical skincare — premium skincare products designed for everyday luxury."
+    />
     <meta property="og:type" content="website" />
+
     <meta name="twitter:card" content="summary_large_image" />
-    <!-- Fonts: Cormorant Garamond, Bodoni Moda, Cinzel, Montserrat, Plus Jakarta Sans -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-  rel="preload"
-  as="style"
-  href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Cinzel:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
-  onload="this.onload=null;this.rel='stylesheet'"
-/>
-<noscript>
-  <link
-    rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Cinzel:wght@400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Montserrat:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
-  />
-</noscript>
-    
-    <!-- Preload LCP Hero Image -->
-    <link rel="preload" as="image" href="./products/permanent/hero_banner.webp" type="image/webp" fetchpriority="high" />
+
+    <!-- Only load the fonts actually needed for the first screen -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link
+      rel="preload"
+      as="style"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@400;500;600;700&display=swap"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+
+    <noscript>
+      <link
+        rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@400;500;600;700&display=swap"
+      />
+    </noscript>
+
+    <!-- LCP HERO IMAGE -->
+    <link
+      rel="preload"
+      as="image"
+      href="/facederma/products/permanent/hero_banner.webp"
+      type="image/webp"
+      fetchpriority="high"
+    />
   </head>
-  <body class="bg-[#FAF9F5] text-[#1E1D1B] antialiased selection:bg-[#C5A880]/30 selection:text-[#1E1D1B]">
+
+  <body
+    class="bg-[#FAF9F5] text-[#1E1D1B] antialiased selection:bg-[#C5A880]/30 selection:text-[#1E1D1B]"
+  >
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+
+    <script type="module" src="/facederma/src/main.tsx"></script>
   </body>
 </html>
+```
